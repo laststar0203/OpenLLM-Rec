@@ -58,7 +58,11 @@ class BaseTrainer(metaclass=ABCMeta):
             )
         self.val_loggers, self.test_loggers = self._create_loggers()
         self.logger_service = LoggerService(
-            self.args, writer, self.val_loggers, self.test_loggers, use_wandb)
+            args=self.args, 
+            writer=writer, 
+            val_loggers=self.val_loggers, 
+            test_loggers=self.test_loggers, 
+            use_wandb=use_wandb)
         
         print(args)
 

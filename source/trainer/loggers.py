@@ -6,11 +6,11 @@ from abc import ABCMeta, abstractmethod
 def save_state_dict(state_dict, path, filename):
     torch.save(state_dict, os.path.join(path, filename))
 
-
 class LoggerService(object):
-    def __init__(self, args, writer, val_loggers, test_loggers, use_wandb):
+    def __init__(self, args, writer, train_loggers=None, val_loggers=None, test_loggers=None, use_wandb=None):
         self.args = args
         self.writer = writer
+        self.train_loggers = train_loggers if train_loggers else []
         self.val_loggers = val_loggers if val_loggers else []
         self.test_loggers = test_loggers if test_loggers else []
         self.use_wandb = use_wandb
@@ -31,6 +31,10 @@ class LoggerService(object):
     
     def log_test(self, log_data):
         for logger in self.test_loggers:
+            logger.log(self.writer, **log_data)
+            
+    def log_train(self, log_data):
+        for logger in self.train_loggers:
             logger.log(self.writer, **log_data)
 
 

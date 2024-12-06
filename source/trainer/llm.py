@@ -41,11 +41,20 @@ def llama_collate_fn_w_truncation(llm_max_length, eval=False):
                 input_ids = [0] * padding_length + input_ids
                 attention_mask = [0] * padding_length + attention_mask
                 if not eval: labels = [-100] * padding_length + labels
+            
+            # 512 -> ":Ċ". tokenizer에서 :\n을 512로 잡아서 변경하였음
+            if eval: assert input_ids[-1] == 512
+            else:
+                assert input_ids[-3] == 512 and input_ids[-1] == 128001
+                assert labels[-3] == -100 and labels[-2] != -100
 
+            # llama2 -> llama3 변경을 통한 token id값 수정
+            """
             if eval: assert input_ids[-1] == 13
             else:
                 assert input_ids[-3] == 13 and input_ids[-1] == 2
                 assert labels[-3] == -100 and labels[-2] != -100
+            """
             
             all_input_ids.append(torch.tensor(input_ids).long())
             all_attention_mask.append(torch.tensor(attention_mask).long())
